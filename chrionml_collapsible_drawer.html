@@ -21,31 +21,59 @@
       width: 100%;
     }
 
-    /* Green toggle button for desktop (top-left) */
-    .sidebar-toggle {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: #28a745;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      z-index: 3;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    /* Desktop green sidebar button (top left) */
+    #sidebarToggle {
       display: none;
     }
 
     @media (min-width: 768px) {
-      .sidebar-toggle {
+      #sidebarToggle {
         display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        z-index: 3;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       }
     }
 
-    /* Bottom drawer for mobile */
-    .drawer {
+    /* Desktop collapsible sidebar (starts hidden left) */
+    #sidebar {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      #sidebar {
+        display: block;
+        position: fixed;
+        top: 70px;
+        left: -320px;
+        width: 300px;
+        max-height: 85%;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+        padding: 16px;
+        overflow-y: auto;
+        transition: left 0.35s ease-in-out;
+        z-index: 2;
+      }
+
+      #sidebar.open {
+        left: 20px;
+      }
+    }
+
+    /* Bottom drawer for mobile only */
+    #drawer {
       position: fixed;
       bottom: -100%;
       left: 0;
@@ -61,32 +89,52 @@
       overflow-y: auto;
     }
 
-    .drawer.open {
+    #drawer.open {
       bottom: 0;
     }
 
-    .drawer h2,
-    .sidebar h2 {
+    #drawer h2, #sidebar h2 {
       margin-top: 0;
       font-size: 1.05rem;
       text-align: center;
       margin-bottom: 12px;
     }
 
-    .drawer ul,
-    .sidebar ul {
+    #drawer ul, #sidebar ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
-    .drawer li,
-    .sidebar li {
+    #drawer li, #sidebar li {
       font-size: 0.88rem;
       padding: 8px 0;
       border-bottom: 1px solid #ddd;
       display: flex;
       justify-content: space-between;
+    }
+
+    /* Mobile green button (bottom center) */
+    #drawerToggle {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #007acc;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      z-index: 3;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    @media (min-width: 768px) {
+      #drawerToggle {
+        display: none;
+      }
     }
 
     .marker {
@@ -102,45 +150,19 @@
       color: #000;
       font-size: 0.85rem;
     }
-
-    /* Desktop collapsible sidebar */
-    .sidebar {
-      position: fixed;
-      top: 70px;
-      left: -320px;
-      width: 300px;
-      max-height: 85%;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      border-top-right-radius: 12px;
-      border-bottom-right-radius: 12px;
-      padding: 16px;
-      overflow-y: auto;
-      transition: left 0.35s ease-in-out;
-      z-index: 2;
-    }
-
-    .sidebar.open {
-      left: 20px;
-    }
-
-    /* Hide sidebar and toggle on mobile */
-    @media (max-width: 767px) {
-      .sidebar,
-      .sidebar-toggle {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body>
 <div id="map"></div>
 
-<!-- Toggle Button for Mobile -->
-<button class="sidebar-toggle" onclick="toggleSidebar()">Chrionml© AI Labs</button>
+<!-- GREEN DESKTOP SIDEBAR TOGGLE -->
+<button id="sidebarToggle" onclick="toggleSidebar()">Chrionml© AI Labs</button>
 
-<!-- Bottom Drawer for Mobile -->
-<div class="drawer" id="drawer">
+<!-- BLUE MOBILE DRAWER TOGGLE -->
+<button id="drawerToggle" onclick="toggleDrawer()">Chrionml© AI Labs</button>
+
+<!-- DESKTOP SIDEBAR -->
+<div id="sidebar">
   <h2>Chrionml© AI Labs</h2>
   <ul>
     <li><span>Austin, TX</span><span>R²=0.98</span></li>
@@ -157,8 +179,8 @@
   </ul>
 </div>
 
-<!-- Sidebar for Desktop -->
-<div class="sidebar" id="sidebar">
+<!-- MOBILE BOTTOM DRAWER -->
+<div id="drawer">
   <h2>Chrionml© AI Labs</h2>
   <ul>
     <li><span>Austin, TX</span><span>R²=0.98</span></li>
@@ -218,5 +240,3 @@ function toggleSidebar() {
 </script>
 </body>
 </html>
-
-
