@@ -22,7 +22,7 @@
       z-index: 0;
     }
 
-    /* Green toggle (desktop only) */
+    /* Green button for desktop (top-left) */
     #sidebarToggle {
       display: none;
     }
@@ -45,7 +45,7 @@
       }
     }
 
-    /* Sidebar (desktop only) */
+    /* Desktop sidebar sliding in from the left */
     #sidebar {
       display: none;
     }
@@ -72,19 +72,17 @@
       }
     }
 
-    /* Mobile button */
+    /* Green button for mobile (bottom-left) */
     #drawerToggle {
-      display: block;
       position: fixed;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #007acc;
+      left: 20px;
+      background: #28a745;
       color: white;
       border: none;
-      padding: 12px 20px;
-      border-radius: 24px;
-      font-size: 0.9rem;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
       cursor: pointer;
       z-index: 3;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -96,7 +94,7 @@
       }
     }
 
-    /* Drawer (mobile only) */
+    /* Mobile bottom drawer */
     #drawer {
       position: fixed;
       bottom: -100%;
@@ -152,16 +150,16 @@
 </head>
 <body>
 
-<!-- MAP -->
+<!-- Map -->
 <div id="map"></div>
 
-<!-- DESKTOP GREEN BUTTON -->
+<!-- Desktop green toggle button -->
 <button id="sidebarToggle" onclick="toggleSidebar()">Chrionml© AI Labs</button>
 
-<!-- MOBILE BLUE BUTTON -->
+<!-- Mobile green toggle button -->
 <button id="drawerToggle" onclick="toggleDrawer()">Chrionml© AI Labs</button>
 
-<!-- DESKTOP SIDEBAR -->
+<!-- Desktop sidebar -->
 <div id="sidebar">
   <h2>Chrionml© AI Labs</h2>
   <ul>
@@ -179,7 +177,7 @@
   </ul>
 </div>
 
-<!-- MOBILE BOTTOM DRAWER -->
+<!-- Mobile drawer -->
 <div id="drawer">
   <h2>Chrionml© AI Labs</h2>
   <ul>
@@ -197,6 +195,7 @@
   </ul>
 </div>
 
+<!-- JS -->
 <script>
   mapboxgl.accessToken = 'pk.eyJ1Ijoib2QzIiwiYSI6ImNtZGV3a3FhMTA2dXkyanE1eHpiMGFzaHcifQ.SFRhIljjn0_VnQ6SoKnYIw';
   const map = new mapboxgl.Map({
