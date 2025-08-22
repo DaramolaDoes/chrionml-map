@@ -111,18 +111,10 @@
 <div id="drawer">
   <h2>AI Realty Single-Family Outlook</h2>
   <table>
-    <tr><th>City</th><th>Price</th></tr>
-    <tr><td>Austin, TX</td><td>$512,413</td></tr>
-    <tr><td>Cambridge, MA</td><td>$1,670,813</td></tr>
-    <tr><td>Denver, CO</td><td>$577,921</td></tr>
-    <tr><td>Plymouth, MA</td><td>$661,533</td></tr>
-    <tr><td>Ithaca, NY</td><td>$427,244</td></tr>
-    <tr><td>Salem, OR</td><td>$369,470</td></tr>
-    <tr><td>San Francisco, CA</td><td>$899,057</td></tr>
-    <tr><td>San Jose, CA</td><td>$1,061,257</td></tr>
-    <tr><td>Santa Clara, CA</td><td>$1,786,961</td></tr>
-    <tr><td>Seattle, WA</td><td>$956,662</td></tr>
-    <tr><td>Waltham, MA</td><td>$863,003</td></tr>
+    <thead>
+      <tr><th>City</th><th>Price</th></tr>
+    </thead>
+    <tbody id="cityTableBody"></tbody>
   </table>
 </div>
 
@@ -151,7 +143,7 @@
     map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.0 });
   });
 
-  // City coordinates + prices
+  // City coordinates + prices (USD)
   const cities = [
     { name: "Austin, TX", coords: [-97.7431, 30.2672], price: 512413 },
     { name: "Cambridge, MA", coords: [-71.1097, 42.3736], price: 1670813 },
@@ -166,6 +158,7 @@
     { name: "Waltham, MA", coords: [-71.2358, 42.3765], price: 863003 }
   ];
 
+  // Add map markers with popups
   cities.forEach(city => {
     const el = document.createElement('div');
     el.className = 'marker';
@@ -177,6 +170,13 @@
       )
       .addTo(map);
   });
+
+  // Sort by price (ascending) and render table rows
+  const sorted = [...cities].sort((a, b) => a.price - b.price);
+  const tbody = document.getElementById('cityTableBody');
+  tbody.innerHTML = sorted.map(c => (
+    `<tr><td>${c.name}</td><td>$${c.price.toLocaleString()}</td></tr>`
+  )).join('');
 
   function toggleDrawer() {
     document.getElementById('drawer').classList.toggle('open');
