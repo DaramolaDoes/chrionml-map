@@ -7,95 +7,162 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
+    :root{
+      /* Apple-like neutrals + Google primary */
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-ghost: rgba(255,255,255,0.82);
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #1a73e8;           /* Google Blue */
+      --accent-contrast: #ffffff;
+      --zebra: #f9fafb;
+      --shadow: 0 8px 24px rgba(16,24,40,0.08);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg: #0b0c0f;
+        --surface: #121417;
+        --surface-ghost: rgba(18,20,23,0.82);
+        --border: #2a2f36;
+        --text: #eef2f6;
+        --muted: #a6adbb;
+        --accent: #8ab4f8;        /* Google blue (dark) */
+        --accent-contrast: #0b0c0f;
+        --zebra: #151922;
+        --shadow: 0 10px 30px rgba(2,6,23,0.6);
+      }
+    }
+
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     #map {
       position: absolute;
-      top: 0;
-      bottom: 0;
+      inset: 0;
       width: 100%;
     }
 
-    /* Green Circular Button Top-Right */
+    /* Floating action button (Apple/Material blend) */
     #drawerToggle {
       position: fixed;
       top: 16px;
       right: 16px;
       width: 72px;
       height: 72px;
-      background-color: #28a745;
-      color: white;
+      background: var(--accent);
+      color: var(--accent-contrast);
       border: none;
       border-radius: 50%;
-      font-size: 0.55rem;
-      line-height: 1.1;
+      font-size: 0.62rem;
+      line-height: 1.15;
       padding: 0 6px;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      box-shadow: var(--shadow);
       z-index: 3;
+      transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+    }
+    #drawerToggle:hover { transform: translateY(-1px); }
+    #drawerToggle:active { transform: translateY(0); }
+    #drawerToggle:focus-visible{
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
     }
 
-    #drawerToggle:hover {
-      background-color: #218838;
-    }
-
-    /* Slide-in drawer left */
+    /* Drawer – frosted card */
     #drawer {
       position: fixed;
-      top: 0;
-      left: -240px;
-      width: 220px;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 12px;
+      top: 16px;
+      left: 16px;
+      width: 260px;
+      height: calc(100% - 32px);
+      background: var(--surface-ghost);
+      padding: 14px 14px 18px;
       z-index: 2;
-      transition: left 0.3s ease;
-      border-right: 1px solid #ddd;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       overflow-y: auto;
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      transform: translateX(-20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .25s ease, opacity .25s ease;
     }
-
     #drawer.open {
-      left: 0;
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    h2 {
-      font-size: 1rem;
-      margin-top: 0;
+    /* Header */
+    #drawer h2 {
+      font-size: 0.95rem;
+      line-height: 1.25;
+      margin: 2px 0 12px;
       text-align: center;
+      letter-spacing: .2px;
+      font-weight: 700;
+      color: var(--text);
     }
 
+    /* Table */
     table {
       width: 100%;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
     }
-
-    th, td {
-      padding: 6px 4px;
+    table thead th {
+      padding: 10px 8px;
       text-align: left;
-      border-bottom: 1px solid #ccc;
+      background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
     }
+    table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    table tbody tr:nth-child(even) td { background: var(--zebra); }
+    table tbody tr:last-child td { border-bottom: none; }
 
+    /* Map markers - accent dot with subtle ring */
     .marker {
-      background-color: #007acc;
-      border-radius: 50%;
       width: 16px;
       height: 16px;
-      box-shadow: 0 0 10px rgba(0,122,204,0.8);
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow:
+        0 0 0 3px #ffffff,
+        0 6px 12px rgba(0,0,0,0.15);
+    }
+    @media (prefers-color-scheme: dark){
+      .marker { box-shadow: 0 0 0 3px #0b0c0f, 0 6px 12px rgba(0,0,0,0.6); }
     }
 
     .mapboxgl-popup-content {
       font-size: 0.85rem;
+      border-radius: 12px !important;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      background: var(--surface);
     }
   </style>
 </head>
@@ -104,10 +171,10 @@
 <!-- Map -->
 <div id="map"></div>
 
-<!-- Circular Green Button -->
+<!-- Floating Button -->
 <button id="drawerToggle" onclick="toggleDrawer()">Chrionml©<br>AI Labs</button>
 
-<!-- Left Drawer Panel -->
+<!-- Drawer -->
 <div id="drawer">
   <h2>Models Accuracy</h2>
   <table>
@@ -132,7 +199,7 @@
 
   const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/outdoors-v12',
+    style: 'mapbox://styles/mapbox/light-v11', // cleaner, system-like base
     center: [-98.5795, 39.8283],
     zoom: 3,
     pitch: 45,
@@ -140,19 +207,18 @@
     antialias: true
   });
 
-  // Make map interactive: zoom, rotate, pitch (mobile & desktop)
+  // Interactions
   map.scrollZoom.enable();
   map.dragRotate.enable();
   map.touchZoomRotate.enable();
   map.keyboard.enable();
 
-  // Add globe
   map.on('style.load', () => {
-    map.setFog({}); // default fog for globe
-    map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.0 });
+    map.setFog({});
+    // Minimalist look: omit terrain for flatter feel
   });
 
-  // Use R² values consistent with the sorted table above
+  // Cities with R² (kept from your list)
   const cities = [
     { name: "Cambridge, MA", coords: [-71.1097, 42.3736], r2: 0.82 },
     { name: "San Francisco, CA", coords: [-122.4194, 37.7749], r2: 0.82 },
@@ -167,12 +233,16 @@
     { name: "Seattle, WA", coords: [-122.3321, 47.6062], r2: 0.97 }
   ];
 
+  // Markers (accent dots with popups)
   cities.forEach(city => {
     const el = document.createElement('div');
     el.className = 'marker';
     new mapboxgl.Marker(el)
       .setLngLat(city.coords)
-      .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`<strong>${city.name}</strong><br>Forecast Accuracy (R²): ${city.r2}`))
+      .setPopup(
+        new mapboxgl.Popup({ offset: 16 })
+          .setHTML(`<strong>${city.name}</strong><br>Forecast Accuracy (R²): ${city.r2}`)
+      )
       .addTo(map);
   });
 
