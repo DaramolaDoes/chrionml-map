@@ -64,15 +64,22 @@
       overflow-y: auto;
     }
 
-    #drawer.open {
-      left: 0;
-    }
+    #drawer.open { left: 0; }
 
-    h2 {
-      font-size: 1rem;
-      margin-top: 0;
+    /* Smaller, perfectly centered two-line header */
+    #drawer h2 {
+      font-size: 0.95rem;      /* smaller than before */
+      line-height: 1.25;       /* tidy two-line spacing */
+      margin: 4px 0 10px;
       text-align: center;
+      letter-spacing: 0.2px;
     }
+    .h2-top, .h2-bottom {
+      display: block;
+      white-space: nowrap;     /* keep each line intact */
+    }
+    .h2-top { font-weight: 700; }
+    .h2-bottom { font-weight: 600; color: #555; }
 
     table {
       width: 100%;
@@ -94,9 +101,7 @@
       box-shadow: 0 0 10px rgba(0,122,204,0.8);
     }
 
-    .mapboxgl-popup-content {
-      font-size: 0.85rem;
-    }
+    .mapboxgl-popup-content { font-size: 0.85rem; }
   </style>
 </head>
 <body>
@@ -109,7 +114,10 @@
 
 <!-- Left Drawer Panel -->
 <div id="drawer">
-  <h2>Single-Family Aug-30-2025 Outlook</h2>
+  <h2>
+    <span class="h2-top">Single-Family</span>
+    <span class="h2-bottom">Aug-30-2025 Outlook</span>
+  </h2>
   <table>
     <thead>
       <tr><th>City</th><th>Price</th></tr>
@@ -184,10 +192,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
