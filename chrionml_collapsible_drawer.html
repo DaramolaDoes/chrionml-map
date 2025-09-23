@@ -8,250 +8,117 @@
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     :root{
-      /* Apple-like neutrals + Google primary */
-      --bg: #f5f5f7;
-      --surface: #ffffff;
-      --surface-ghost: rgba(255,255,255,0.82);
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --accent: #1a73e8;           /* Google Blue */
-      --accent-contrast: #ffffff;
-      --zebra: #f9fafb;
-      --shadow: 0 8px 24px rgba(16,24,40,0.08);
+      --bg:#f5f5f7; --surface:#ffffff; --surface-ghost:rgba(255,255,255,0.82);
+      --border:#e5e7eb; --text:#111827; --muted:#6b7280;
+      --accent:#1a73e8; --accent-contrast:#ffffff; --zebra:#f9fafb;
+      --shadow:0 8px 24px rgba(16,24,40,0.08);
     }
     @media (prefers-color-scheme: dark){
       :root{
-        --bg: #0b0c0f;
-        --surface: #121417;
-        --surface-ghost: rgba(18,20,23,0.82);
-        --border: #2a2f36;
-        --text: #eef2f6;
-        --muted: #a6adbb;
-        --accent: #8ab4f8;        /* Google blue (dark) */
-        --accent-contrast: #0b0c0f;
-        --zebra: #151922;
-        --shadow: 0 10px 30px rgba(2,6,23,0.6);
+        --bg:#0b0c0f; --surface:#121417; --surface-ghost:rgba(18,20,23,0.82);
+        --border:#2a2f36; --text:#eef2f6; --muted:#a6adbb;
+        --accent:#8ab4f8; --accent-contrast:#0b0c0f; --zebra:#151922;
+        --shadow:0 10px 30px rgba(2,6,23,0.6);
       }
     }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    html,body{height:100%;margin:0;padding:0;font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);}
+    #map{position:absolute;inset:0;width:100%;}
+    #drawerToggle{
+      position:fixed;top:16px;right:16px;width:72px;height:72px;
+      background:var(--accent);color:var(--accent-contrast);border:none;border-radius:50%;
+      font-size:.62rem;line-height:1.15;padding:0 6px;text-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);z-index:3;transition:transform .12s ease,box-shadow .2s ease,background .2s ease;
     }
-
-    #map {
-      position: absolute;
-      inset: 0;
-      width: 100%;
+    #drawerToggle:hover{transform:translateY(-1px);} #drawerToggle:active{transform:translateY(0);}
+    #drawerToggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+    #drawer{
+      position:fixed;top:16px;left:16px;width:260px;height:calc(100% - 32px);
+      background:var(--surface-ghost);padding:14px 14px 18px;z-index:2;border:1px solid var(--border);
+      border-radius:16px;box-shadow:var(--shadow);overflow-y:auto;backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);
+      transform:translateX(-20px);opacity:0;pointer-events:none;transition:transform .25s ease,opacity .25s ease;
     }
-
-    /* Floating action button (Apple/Material blend) */
-    #drawerToggle {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      width: 72px;
-      height: 72px;
-      background: var(--accent);
-      color: var(--accent-contrast);
-      border: none;
-      border-radius: 50%;
-      font-size: 0.62rem;
-      line-height: 1.15;
-      padding: 0 6px;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      z-index: 3;
-      transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
-    }
-    #drawerToggle:hover { transform: translateY(-1px); }
-    #drawerToggle:active { transform: translateY(0); }
-    #drawerToggle:focus-visible{
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    /* Drawer – frosted card */
-    #drawer {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      width: 260px;
-      height: calc(100% - 32px);
-      background: var(--surface-ghost);
-      padding: 14px 14px 18px;
-      z-index: 2;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow-y: auto;
-      backdrop-filter: saturate(160%) blur(14px);
-      -webkit-backdrop-filter: saturate(160%) blur(14px);
-      transform: translateX(-20px);
-      opacity: 0;
-      pointer-events: none;
-      transition: transform .25s ease, opacity .25s ease;
-    }
-    #drawer.open {
-      transform: translateX(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* Header */
-    #drawer h2 {
-      font-size: 0.95rem;
-      line-height: 1.25;
-      margin: 2px 0 12px;
-      text-align: center;
-      letter-spacing: .2px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    /* Table */
-    table {
-      width: 100%;
-      font-size: 0.8rem;
-      border-collapse: collapse;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    table thead th {
-      padding: 10px 8px;
-      text-align: left;
-      background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
-      border-bottom: 1px solid var(--border);
-      font-weight: 700;
-    }
-    table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    table tbody tr:nth-child(even) td { background: var(--zebra); }
-    table tbody tr:last-child td { border-bottom: none; }
-
-    /* Map markers - accent dot with subtle ring */
-    .marker {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow:
-        0 0 0 3px #ffffff,
-        0 6px 12px rgba(0,0,0,0.15);
-    }
-    @media (prefers-color-scheme: dark){
-      .marker { box-shadow: 0 0 0 3px #0b0c0f, 0 6px 12px rgba(0,0,0,0.6); }
-    }
-
-    .mapboxgl-popup-content {
-      font-size: 0.85rem;
-      border-radius: 12px !important;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      color: var(--text);
-      background: var(--surface);
-    }
+    #drawer.open{transform:translateX(0);opacity:1;pointer-events:auto;}
+    #drawer h2{font-size:.95rem;line-height:1.25;margin:2px 0 12px;text-align:center;letter-spacing:.2px;font-weight:700;color:var(--text);}
+    table{width:100%;font-size:.8rem;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+    thead th{padding:10px 8px;text-align:left;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0));border-bottom:1px solid var(--border);font-weight:700;}
+    td{padding:10px 8px;border-bottom:1px solid var(--border);}
+    tbody tr:nth-child(even) td{background:var(--zebra);} tbody tr:last-child td{border-bottom:none;}
+    .marker{width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px #ffffff,0 6px 12px rgba(0,0,0,0.15);}
+    @media (prefers-color-scheme: dark){.marker{box-shadow:0 0 0 3px #0b0c0f,0 6px 12px rgba(0,0,0,0.6);}}
+    .mapboxgl-popup-content{font-size:.85rem;border-radius:12px!important;border:1px solid var(--border);box-shadow:var(--shadow);color:var(--text);background:var(--surface);}
   </style>
 </head>
 <body>
 
-<!-- Map -->
 <div id="map"></div>
 
-<!-- Floating Button -->
 <button id="drawerToggle" onclick="toggleDrawer()">Chrionml©<br>AI Labs</button>
 
-<!-- Drawer -->
 <div id="drawer">
   <h2>Models Accuracy</h2>
   <table>
-    <tr><th>City</th><th>R²</th></tr>
-    <tr><td>Cambridge, MA</td><td>0.82</td></tr>
-    <tr><td>San Francisco, CA</td><td>0.84</td></tr>
-    <tr><td>Denver, CO</td><td>0.86</td></tr>
-    <tr><td>San Jose, CA</td><td>0.88</td></tr>
-    <tr><td>Ithaca, NY</td><td>0.89</td></tr>
-    <tr><td>Waltham, MA</td><td>0.94</td></tr>
-    <tr><td>Santa Clara, CA</td><td>0.90</td></tr>
-    <tr><td>Salem, OR</td><td>0.94</td></tr>
-    <tr><td>Plymouth, MA</td><td>0.96</td></tr>
-    <tr><td>Austin, TX</td><td>0.97</td></tr>
-    <tr><td>Seattle, WA</td><td>0.97</td></tr>
+    <thead>
+      <tr><th>City</th><th>R²</th></tr>
+    </thead>
+    <tbody id="cityTableBody"><!-- rows injected in JS --></tbody>
   </table>
 </div>
 
-<!-- JS -->
 <script>
   mapboxgl.accessToken = 'pk.eyJ1Ijoib2QzIiwiYSI6ImNtZGV3a3FhMTA2dXkyanE1eHpiMGFzaHcifQ.SFRhIljjn0_VnQ6SoKnYIw';
 
   const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v11', // cleaner, system-like base
+    style: 'mapbox://styles/mapbox/light-v11',
     center: [-98.5795, 39.8283],
-    zoom: 3,
-    pitch: 45,
-    bearing: -17.6,
-    antialias: true
+    zoom: 3, pitch: 45, bearing: -17.6, antialias: true
   });
 
-  // Interactions
-  map.scrollZoom.enable();
-  map.dragRotate.enable();
-  map.touchZoomRotate.enable();
-  map.keyboard.enable();
+  map.scrollZoom.enable(); map.dragRotate.enable(); map.touchZoomRotate.enable(); map.keyboard.enable();
+  map.on('style.load', () => map.setFog({}));
 
-  map.on('style.load', () => {
-    map.setFog({});
-    // Minimalist look: omit terrain for flatter feel
-  });
-
-  // Cities with R² (kept from your list)
+  // Cities with R² (unchanged data)
   const cities = [
-    { name: "Cambridge, MA", coords: [-71.1097, 42.3736], r2: 0.82 },
+    { name: "Cambridge, MA",     coords: [-71.1097, 42.3736], r2: 0.82 },
     { name: "San Francisco, CA", coords: [-122.4194, 37.7749], r2: 0.84 },
-    { name: "Denver, CO", coords: [-104.9903, 39.7392], r2: 0.86 },
-    { name: "San Jose, CA", coords: [-121.8863, 37.3382], r2: 0.88 },
-    { name: "Ithaca, NY", coords: [-76.5019, 42.4430], r2: 0.89 },
-    { name: "Waltham, MA", coords: [-71.2358, 42.3765], r2: 0.94 },
-    { name: "Santa Clara, CA", coords: [-121.9552, 37.3541], r2: 0.90 },
-    { name: "Salem, OR", coords: [-123.0351, 44.9429], r2: 0.94 },
-    { name: "Plymouth, MA", coords: [-70.6673, 41.9584], r2: 0.96 },
-    { name: "Austin, TX", coords: [-97.7431, 30.2672], r2: 0.97 },
-    { name: "Seattle, WA", coords: [-122.3321, 47.6062], r2: 0.97 }
+    { name: "Denver, CO",        coords: [-104.9903, 39.7392], r2: 0.86 },
+    { name: "San Jose, CA",      coords: [-121.8863, 37.3382], r2: 0.88 },
+    { name: "Ithaca, NY",        coords: [-76.5019, 42.4430], r2: 0.89 },
+    { name: "Waltham, MA",       coords: [-71.2358, 42.3765], r2: 0.94 },
+    { name: "Santa Clara, CA",   coords: [-121.9552, 37.3541], r2: 0.90 },
+    { name: "Salem, OR",         coords: [-123.0351, 44.9429], r2: 0.94 },
+    { name: "Plymouth, MA",      coords: [-70.6673, 41.9584], r2: 0.96 },
+    { name: "Austin, TX",        coords: [-97.7431, 30.2672], r2: 0.97 },
+    { name: "Seattle, WA",       coords: [-122.3321, 47.6062], r2: 0.97 }
   ];
 
-  // Markers (accent dots with popups)
+  // Place markers
   cities.forEach(city => {
     const el = document.createElement('div');
     el.className = 'marker';
     new mapboxgl.Marker(el)
       .setLngLat(city.coords)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 16 })
-          .setHTML(`<strong>${city.name}</strong><br>Forecast Accuracy (R²): ${city.r2}`)
-      )
+      .setPopup(new mapboxgl.Popup({ offset: 16 })
+        .setHTML(`<strong>${city.name}</strong><br>Forecast Accuracy (R²): ${city.r2}`))
       .addTo(map);
   });
 
-  function toggleDrawer() {
-    document.getElementById('drawer').classList.toggle('open');
-  }
+  // Build sorted table (descending by R²)
+  const tbody = document.getElementById('cityTableBody');
+  cities
+    .slice()                      // don’t mutate original
+    .sort((a, b) => b.r2 - a.r2)  // high → low
+    .forEach(c => {
+      const tr = document.createElement('tr');
+      const tdCity = document.createElement('td');
+      const tdR2 = document.createElement('td');
+      tdCity.textContent = c.name;
+      tdR2.textContent = c.r2.toFixed(2);
+      tr.appendChild(tdCity);
+      tr.appendChild(tdR2);
+      tbody.appendChild(tr);
+    });
+
+  function toggleDrawer(){ document.getElementById('drawer').classList.toggle('open'); }
 </script>
 </body>
 </html>
-
-
-
