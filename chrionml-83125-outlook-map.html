@@ -93,7 +93,8 @@
     { name: "San Jose, CA",      coords: [-121.8863, 37.3382], price: 1061257 },
     { name: "Santa Clara, CA",   coords: [-121.9552, 37.3541], price: 1786961 },
     { name: "Seattle, WA",       coords: [-122.3321, 47.6062], price: 956662 },
-    { name: "Waltham, MA",       coords: [-71.2358, 42.3765],  price: 863003 }
+    { name: "Waltham, MA",       coords: [-71.2358, 42.3765],  price: 863003 },
+    { name: "Back Bay, MA",      coords: [-71.0838, 42.3503],  price: 3588157 }
   ];
 
   // Markers
@@ -108,7 +109,7 @@
   });
 
   // Sort by price (DESC) and render table
-  const sorted = [...cities].sort((a, b) => b.price - a.price); // <-- changed comparator
+  const sorted = [...cities].sort((a, b) => b.price - a.price);
   const tbody = document.getElementById('cityTableBody');
   tbody.innerHTML = sorted
     .map(c => `<tr><td>${c.name}</td><td>$${c.price.toLocaleString()}</td></tr>`)
@@ -118,5 +119,3 @@
 </script>
 </body>
 </html>
-
-
